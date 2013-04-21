@@ -24,11 +24,12 @@ class testApp : public ofBaseApp{
         std::vector<ofColor> colorTypes;
         int neighborhoodWidth = 4;
         int neighborhoodHeight = 4;
-        int blockWidth = 10;
-        int blockHeight = 10;
+        int blockWidth = 20;
+        int blockHeight = 20;
 
         int getType(int row, int col, int relativeRow, int relativeCol);
         float contentment(int row, int col, int compareRow, int compareCol);
+        float utility(int row, int col, int compareRow, int compareCol);
         int clampRow(int row, int col);
         int clampCol(int row, int col);
         void switchType(int row, int col, int relativeRow, int relativeCol);

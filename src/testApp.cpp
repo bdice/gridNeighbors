@@ -5,10 +5,10 @@ void testApp::setup(){
     //ofSetFrameRate(5);
     colorTypes.push_back(ofColor::red);
     colorTypes.push_back(ofColor::yellow);
-/*    colorTypes.push_back(ofColor::blue);
-    colorTypes.push_back(ofColor::green);
-    colorTypes.push_back(ofColor::white);
-    colorTypes.push_back(ofColor::black);*/
+    colorTypes.push_back(ofColor::blue);
+    //colorTypes.push_back(ofColor::green);
+    //colorTypes.push_back(ofColor::white);
+    //colorTypes.push_back(ofColor::black);
     resetNeighborhood();
 }
 
@@ -25,7 +25,7 @@ int loop = 0;
         for(int i=-1; i<=1; i++){
             for(int j=-1; j<=1; j++){
                 //cout << "i: " << i << " j: " << j << endl;
-                if(contentment(randomRow, randomCol, bestSwitchRow, bestSwitchCol) < contentment(randomRow, randomCol, i, j)){
+                if(utility(randomRow, randomCol, bestSwitchRow, bestSwitchCol) < utility(randomRow, randomCol, i, j)){
                     //cout << "In if statement" << endl;
                     bestSwitchRow = i;
                     bestSwitchCol = j;
@@ -97,7 +97,7 @@ float testApp::contentment(int row, int col, int compareRow, int compareCol){
     int myType = getType(row, col, 0, 0);
     //cout << "Running contentment on " << row << ", " << col << ", " << compareRow << ", " << compareCol << endl;
     float contentment = 0;
-    int searchDistance = 5;
+    int searchDistance = 2;
     int switchRow = clampRow(row+compareRow, col+compareCol);
     int switchCol = clampCol(row+compareRow, col+compareCol);
     //cout << "Starting for loop" << endl;
@@ -107,7 +107,7 @@ float testApp::contentment(int row, int col, int compareRow, int compareCol){
                 if(myType == getType(switchRow, switchCol, i, j)){
                     //float distance = abs(i) + abs(j);
                     float distance = sqrt(pow(i, 2) + pow(j, 2));
-                    float weight = 1/(distance);
+                    float weight = pow(distance, -0.5);
                     //cout << "Weight " << weight << endl;
                     contentment += weight;
                     //cout << contentment << endl;
@@ -117,6 +117,14 @@ float testApp::contentment(int row, int col, int compareRow, int compareCol){
     }
     //cout << "Contentment of " << row << ", " << col << ", " << compareRow << ", " << compareCol << " is " << contentment << endl;
     return contentment;
+}
+
+float testApp::utility(int row, int col, int compareRow, int compareCol){
+    float goThere = contentment(row, col, compareRow, compareCol) - contentment(row, col, 0, 0);
+    float comeHere = contentment(clampRow(row+compareRow, col+compareCol), clampCol(row+compareRow, col+compareCol), -compareRow, -compareCol) - contentment(clampRow(row+compareRow, col+compareCol), clampCol(row+compareRow, col+compareCol), 0, 0);
+    //cout << "goThere: " << goThere << " comeHere: " << comeHere << endl;
+    float utility = goThere + comeHere;
+    return utility;
 }
 
 void testApp::switchType(int row, int col, int switchRow, int switchCol){
